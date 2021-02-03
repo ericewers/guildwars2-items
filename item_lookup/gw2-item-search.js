@@ -9,7 +9,7 @@ if (!itemLookup.length) {
       return runParallel(fetchItems, pages, 5)
   })
   .then(done => {
-    fs.writeFileSync('../src/items.json', JSON.stringify(itemLookup));
+    fs.writeFileSync('items.json', JSON.stringify(itemLookup));
   })
   .catch(console.log.bind(console));
 }
@@ -41,7 +41,7 @@ function fetchItems (page) {
           if (items.text) {
             return Promise.resolve(true);
           }
-          items.forEach(({id, rarity, icon, name, level, type, details, flags}) => itemLookup.push({ id, rarity, icon, name, level, type, details: details ? details.type : '', flags }));
+          items.forEach(({id, rarity, icon, name, level, type, details, flags, description}) => itemLookup.push({ id, rarity, icon, name, level, type, details: details ? details.type : '', flags, description: description ? description : '' }));
           //items.forEach(({id, name}) => itemLookup.push({ id, name }));
           return parseInt(result.headers.get('X-Page-Total') || '0');
         });

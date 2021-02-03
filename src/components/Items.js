@@ -1,37 +1,42 @@
 import React from 'react';
+import ItemPopup from './ItemPopup'
 
-const Items = ({ data, pageNumber, pageSize }) => {
+const Items = ({ data }) => {
 
-  const minIndex = (pageNumber - 1) * pageSize
-  const maxIndex = (pageNumber * pageSize) - 1
-  const items = data.slice(minIndex, maxIndex).map(r => (
-    <tr key={r.id}>
-      <td><img className={r.rarity} src={r.icon} alt={r.name}></img></td>
-      <td>{r.name}</td>
-      <td>{r.level != null ? r.level : 0}</td>
-      <td>{r.rarity}</td>
-      <td>{r.type != null ? r.type : ''} - {r.details}</td>
+  const items = data.map(item => (
+    <tr key={item.id}>
+      <td><ItemPopup
+        id={item.id}
+        desc={item.description}
+        name={item.name}
+        rarity={item.rarity}
+        icon={item.icon} />
+      </td>
+      <td>{item.name}</td>
+      <td>{item.level}</td>
+      <td>{item.rarity}</td>
+      <td>{item.type} {item.details && item.details['type'] ? ' - ' + item.details['type'] : ''}</td>
     </tr>
   ))
 
   return <div>
 
-          <table id="items">
-            <thead>
-              <tr>
-                <th></th>
-                <th width="50%">Item Name</th>
-                <th>Required Level</th>
-                <th>Rarity</th>
-                <th>Category</th>
-              </tr>
-            </thead>
-            <tbody>
-              {items}
-            </tbody>
-          </table>
+    <table id="items">
+      <thead>
+        <tr>
+          <th></th>
+          <th>Item Name</th>
+          <th>Required Level</th>
+          <th>Rarity</th>
+          <th>Category</th>
+        </tr>
+      </thead>
+      <tbody>
+        {items}
+      </tbody>
+    </table>
 
-        </div>
+  </div>
 
 }
 

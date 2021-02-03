@@ -1,96 +1,55 @@
-import React, { Component } from 'react'
+import React, { useState, useEffect } from 'react'
 import './App.css'
 import Items from './components/Items'
-import * as data from './items.json'
-import { Container, Pagination, Search } from 'semantic-ui-react'
-import _ from 'lodash'
+import { Container, Pagination, Button } from 'semantic-ui-react'
+import axios from 'axios'
 
-class App extends Component {
+const App = () => {
 
-  constructor() {
-    super()
+  const [pageSize,] = useState(50)
+  const [apiInfo, setApiInfo] = useState({
+    url: `https://api.guildwars2.com/v2/items?page=0&page_size=${pageSize}`,
+    pageTotal: 0,
+    data: []
+  })
 
-    this.state = {
-      totalItems: data.data.length,
-      currentPage: 1,
-      pageSize: 50,
-      isLoading: false,
-      searchResults: [],
-      searchValue: '',
-      maxResults: 20
-    }
+  useEffect(() => {
+    axios.get(apiInfo.url).then(response => {
+      setApiInfo(prevState => ({
+        ...prevState,
+        pageTotal: response.headers['x-page-total'],
+        data: response.data
+      }))
+    })
+  }, [apiInfo.url])
 
+  const onChange = (e, pageInfo) => {
+    setApiInfo(prevState => ({
+      ...prevState,
+      url: `https://api.guildwars2.com/v2/items?page=${(pageInfo.activePage - 1).toString()}&page_size=${pageSize}`
+    }))
   }
 
-  getPage = (e, { activePage }) => { 
-    this.setState({ currentPage: activePage })
-  }
+  return (
+    <>
 
-  handleResultSelect = (e, { result }) => this.setState({ searchValue: result.name })
+      <Container className="container" fluid textAlign="center">
 
-  handleSearchChange = (e, { value }) => {
-    this.setState({ isLoading: true, searchValue: value })
+        <h2 id="top">Guild Wars 2 Items</h2>
 
-    setTimeout(() => {
-      if (this.state.searchValue.length < 1) return this.setState({ isLoading: false, searchResults: [], searchValue: '' })
+        <Pagination
+          onPageChange={onChange}
+          totalPages={apiInfo.pageTotal}
+        />
 
-      const re = new RegExp(_.escapeRegExp(this.state.searchValue), 'i')
-      const isMatchWithLimit = (arr, maxCount) => {
-        let results = []
-        _.forEach(arr, (result) => {
-            if (results.length === maxCount) return false
-            result.title = result.name
-            if (re.test(result.title)) results.push(result)
-        })
-        return results
-    }
+        <Items data={apiInfo.data} />
 
-      this.setState({
-        isLoading: false,
-        searchResults: isMatchWithLimit(data.data, this.state.maxResults),
-      })
-    }, 300)
-  }
+        <Button className="scrollUp" href="#top" circular icon='arrow alternate circle up outline' />
 
-  render() {
+      </Container>
 
-    return (
-      <>
-
-        <Container textAlign="center">
-          <h2>Guild Wars 2 Items</h2>
-        </Container>
-
-        <Container textAlign="center">
-          <Pagination
-            activePage = { this.state.currentPage } 
-            onPageChange = { this.getPage }
-            totalPages = { Math.ceil(this.state.totalItems / this.state.pageSize) } 
-          />
-        </Container>
-
-        <Container textAlign="center">
-          <Search
-              loading = { this.state.isLoading }
-              onResultSelect = { this.handleResultSelect }
-              onSearchChange = { _.debounce(this.handleSearchChange, 500, {
-                leading: true,
-              })}
-              results = { this.state.searchResults }
-              value = { this.state.searchValue }
-              { ...this.props }
-            />
-          </Container>
-
-        <div className="content">
-          <Items data = { data.data } pageNumber = { this.state.currentPage } pageSize = { this.state.pageSize } />
-        </div>
-
-      </>
-    )
-
-  }
-
+    </>
+  )
 }
 
 export default App
