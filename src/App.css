@@ -1,22 +1,36 @@
-body {
-  background-color: #f5f5f5;
+html, body {
+  scroll-behavior: smooth;
+  background-color: #f5f5f5 !important;
   font-family: "Yeon Sung", sans-serif;
-  padding: 30px;
 }
 
 .container {
   padding: 30px 0px;
 }
 
-#top {
-  padding: 10px 0px;
+.search {
+  padding-top: 20px;
+}
+
+.search .input {
+  width: 45%;
+}
+
+.selection {
+  float: left;
+  padding: 20px;
+  margin: 5px;
+}
+
+.itemCount {
+  float: right;
+  margin: 15px;
 }
 
 #items {
   border-collapse: collapse;
-  width: 50%;
-  margin: 30px auto;
-  box-shadow: 10px 10px 20px #999;
+  width: 100%;
+  margin: auto;
 }
 
 #items td, #items th {
@@ -37,7 +51,7 @@ body {
   padding-top: 8px;
   padding-bottom: 8px;
   text-align: left;
-  background-color: #4CAF50;
+  background-color: #00b5ad;
   color: white;
 }
 
@@ -78,6 +92,6 @@ img.Basic {
 
 .scrollUp {
   position: fixed;
-  bottom: 20px;
-  right: 20px;
+  bottom: 30px;
+  right: 30px;
 }
